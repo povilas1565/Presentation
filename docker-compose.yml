@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  nginx:
+    build: .
+    container_name: nginx-server
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    depends_on:
+      - flask-app
+    command: service nginx start && tail -f /dev/null
+
+networks:
+  app-network:
+    driver: bridge
